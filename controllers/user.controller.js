@@ -1,30 +1,25 @@
-const db = require("../models");
-const Tutorial = db.tutorials;
+const db = require("./../models");
+const user = db.user;
 const Op = db.Sequelize.Op;
 
 exports.create = (req, res) => {
-        if (!req.body.title) {
-            res.status(400).send({
-                message: "Content can not be empty!"
-            });
-            return;
-        }
 
-        const tutorial = {
-            title: req.body.title,
-            description: req.body.description,
-            published: req.body.published ? req.body.published : false
+        const user = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            password: req.body.password
         };
 
 
-        Tutorial.create(tutorial)
+       db.user.create(user)
             .then(data => {
                 res.send(data);
             })
             .catch(err => {
                 res.status(500).send({
                     message:
-                        err.message || "Some error occurred while creating the Tutorial."
+                        err.message || "Some error occurred while creating the USER."
                 });
             });
 
@@ -32,17 +27,17 @@ exports.create = (req, res) => {
 
 
 exports.findAll = (req, res) => {
-    const title = req.query.title;
-    let condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
+    const user = req.query.user;
+    let condition = user ? { user: { [Op.iLike]: `%${user}%` } } : null;
 
-    Tutorial.findAll({ where: condition })
+    db.user.findAll({ where: condition })
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
                 message:
-                    err.message || "Some error occurred while retrieving tutorials."
+                    err.message || "Some error occurred while retrieving USERS."
             });
         });
 
@@ -51,19 +46,19 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
-    Tutorial.findByPk(id)
+    db.user.findByPk(id)
         .then(data => {
             if (data) {
                 res.send(data);
             } else {
                 res.status(404).send({
-                    message: `Cannot find Tutorial with id=${id}.`
+                    message: `Cannot find USER with id=${id}.`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Tutorial with id=" + id + err.message
+                message: "Error retrieving USER with id=" + id + err.message
             });
         });
 };
@@ -71,23 +66,23 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     const id = req.params.id;
 
-    Tutorial.update(req.body, {
+    db.user.update(req.body, {
         where: { id: id }
     })
         .then(num => {
             if (num === 1) {
                 res.send({
-                    message: "Tutorial was updated successfully."
+                    message: "USER was updated successfully."
                 });
             } else {
                 res.send({
-                    message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found or req.body is empty!`
+                    message: `Cannot update USER with id=${id}. Maybe USER was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating Tutorial with id=" + id + err.message
+                message: "Error updating USER with id=" + id + err.message
             });
         });
 };
@@ -95,52 +90,52 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const id = req.params.id;
 
-    Tutorial.destroy({
-        where: { id: id }
+    user.destroy({
+        where: { "id": id }
     })
         .then(num => {
             if (num === 1) {
                 res.send({
-                    message: "Tutorial was deleted successfully!"
+                    message: "USER was deleted successfully!"
                 });
             } else {
                 res.send({
-                    message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`
+                    message: `Cannot delete USER with id=${id}. Maybe USER was not found!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Could not delete Tutorial with id=" + id + err.message
+                message: "Could not delete USER with id=" + id + err.message
             });
         });
 };
 
 exports.deleteAll = (req, res) => {
-    Tutorial.destroy({
+    user.destroy({
         where: {},
         truncate: false
     })
         .then(nums => {
-            res.send({ message: `${nums} Tutorials were deleted successfully!` });
+            res.send({ message: `${nums} USER were deleted successfully!` });
         })
         .catch(err => {
             res.status(500).send({
                 message:
-                    err.message || "Some error occurred while removing all tutorials."
+                    err.message || "Some error occurred while removing all USER."
             });
         });
 };
 
 exports.findAllPublished = (req, res) => {
-    Tutorial.findAll({ where: { published: true } })
+    db.user.findAll({ where: { published: true } })
         .then(data => {
             res.send(data);
         })
         .catch(err => {
             res.status(500).send({
                 message:
-                    err.message || "Some error occurred while retrieving tutorials."
+                    err.message || "Some error occurred while retrieving USER."
             });
         });
 };

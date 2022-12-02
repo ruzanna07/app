@@ -18,10 +18,10 @@ const db =require("./models");
 db.sequelize.sync();
 
 app.get("/", (req, res) => {
-    res.json({ message: "Welcome to bezkoder application." });
+    res.json({ message: "Welcome to application." });
 });
 
-require("./routes/tutorial.routes")(app)
+require("./routes/user.routes")(app)
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT,() => {
